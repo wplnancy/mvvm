@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+</head>
+<body>
+<!-- 双向数据绑定    vue 数据劫持 + 发布订阅模式  不兼容低版本  核心实现的原理是 es5 的方法  Object.defineProperty -->
+
+<!-- 给对象定义属性 -->
+
+<script>
+  let obj = {}
+
+  Object.defineProperty(obj, 'name', {
+    // value: 'wpl',
+    configurable: true,// 可以通过 delete 删除
+    // writable: true,
+    get () {
+      return 'aaa'
+    },
+    set(value) {
+      console.log('我设置的值是', value);
+    },
+    enumerable: true // 是否能循环出来
+  });
+
+  console.log(obj.name);
+
+  //delete obj.name// 发现删除不了
+
+  //obj.name = 'aaa'// writable 为 true的话是可以改变的
+
+  // console.log(obj);
+
+
+  // for(let key in obj) {
+  //   console.log(key);
+  // }
+</script>
+
+</body>
+</html>

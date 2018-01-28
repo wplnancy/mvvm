@@ -16,6 +16,44 @@ function Zhufeng(options = {}) {
             }
         })
     }
+    new Compile(options.el, this);
+}
+
+function Compile(el, vm) {
+    // el 表示的替换的范围
+    // 移动到文档碎片中
+    vm.$el = document.querySelector(el);
+    let fragment = document.createDocumentFragment();
+    // 将 app 中的内容移入到内存中
+    while (child = vm.$el.firstChild) {
+        console.log('vm', vm.$el);
+        console.log(child);
+        fragment.appendChild(child);
+    }
+    console.log(fragment)
+
+    replace(fragment);
+
+    function replace(fragment) {
+        Array.from(fragment.childNodes).forEach(function(node) {
+            let text = node.textContent
+            let reg = /\{\{ (.*) \}\}/;
+            if (node.nodeType === 3 && reg.test(text)) {
+                console.log(RegExp.$1);
+                let arr = RegExp.$1.split('.');// [a, a, a]
+                console.log(arr)
+                let val = vm;
+                arr.forEach(function(k) {
+                  val = val[k]
+                })
+                node.textContent = text.replace(/\{\{(.*)\}\}/, val);
+            }
+            if (node.childNodes) {
+                replace(node)
+            }
+        })
+    }
+    vm.$el.appendChild(fragment);
 }
 
 // 观察对象给对象增加 ObjectDefineProperty
@@ -24,9 +62,7 @@ function Observe(data) {
     for (let key in data) {
         let val = data[key];
         // 实现循环的递归
-        if (typeof val === 'object') {
-            observe(val);
-        }
+        observe(val);
         // 把 data 双向通过 Object.defineProperty 的方式定义属性
         Object.defineProperty(data, key, {
             enumerable: true,
@@ -48,6 +84,7 @@ function Observe(data) {
 
 
 function observe(data) {
+    if (typeof data === 'object') { return; }
     return new Observe(data)
 }
 

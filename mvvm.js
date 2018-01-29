@@ -16,7 +16,22 @@ function Zhufeng(options = {}) {
             }
         })
     }
+    initComputed.call(this);
     new Compile(options.el, this);
+}
+
+
+function initComputed() {
+    let vm = this;
+    // computed 是一个对象
+    let computed = this.$options.computed; // Object.keys
+    Object.keys(computed).forEach(function(key) {
+        Object.defineProperty(vm, key, { // computed[key]
+            get: typeof computed[key] === 'function' ? computed[key] : computed[key].get,
+            set() {}
+        })
+    })
+
 }
 
 function Compile(el, vm) {

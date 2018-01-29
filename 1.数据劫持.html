@@ -11,14 +11,21 @@
     <div id="app">
         <p> a.a 的值是： {{ a.a }}</p>
         <div> b 的值是：{{ b }}</div>
-        <input type="text" v-model="b"/>
+        <input type="text" v-model="b" />
+        {{ hello }}
     </div>
     <script>
     // Object.defineProperty()
     let zf = new Zhufeng({
         el: '#app',
-        data: { a: { a: '是a' }, b: '是b' }
+        data: { a: { a: '是a' }, b: '是b' },
+        computed: {
+            hello() {
+                return this.b + this.a.a
+            }
+        }
     })
+    // computed: 可以缓存，知识把数据挂在 vm 上
     </script>
 </body>
 

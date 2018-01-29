@@ -48,6 +48,26 @@ function Compile(el, vm) {
                 })
                 node.textContent = text.replace(/\{\{(.*)\}\}/, val);
             }
+
+            if (node.nodeType === 1) {
+                let nodeAttrs = node.attributes;
+                Array.from(nodeAttrs).forEach(function(attr) {
+                    let name = attr.name;
+                    let exp = attr.value; // v-model="b"
+                    if (name.indexOf('v-') === 0) {
+                        // v-model
+                        node.value = vm[exp];
+                    }
+                    new Watcher(vm, exp, function(newVal) {
+                        // 当 watcher 触发的时候回自动将内容放到输入框内
+                        node.value = newVal
+                    });
+                    node.addEventListener('input', function(e) {
+                        let newVal = e.target.value;
+                        vm[exp] = newVal; // 这个时候回出发 set 方法自动更新视图
+                    })
+                })
+            }
             if (node.childNodes) {
                 replace(node)
             }
@@ -62,8 +82,6 @@ function Observe(data) {
     for (let key in data) {
         let val = data[key];
         let dep = new Dep()
-        console.log(1);
-        console.log(dep);
         // 实现循环的递归
         observe(val);
         // 把 data 双向通过 Object.defineProperty 的方式定义属性
@@ -90,7 +108,7 @@ function Observe(data) {
 
 function observe(data) {
     if (typeof data === 'object') {
-      new Observe(data)
+        new Observe(data)
     }
 }
 
